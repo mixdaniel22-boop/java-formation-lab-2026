@@ -19,7 +19,7 @@ public class CashPaymentStrategy implements PaymentStrategy {
 
     @Override
     public String confirmationMessage() {
-        return "Pago en efectivo registrado, sin comisión";
+        return "Pago en efectivo registrado, sin comisión.";
     }
 
 }

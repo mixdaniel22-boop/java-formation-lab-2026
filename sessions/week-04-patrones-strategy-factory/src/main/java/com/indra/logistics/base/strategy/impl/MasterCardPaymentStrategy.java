@@ -12,7 +12,7 @@ public class MasterCardPaymentStrategy implements PaymentStrategy {
 
     @Override
     public String methodCode() {
-        return "MASTERCARD";
+        return "MASTER_CARD";
     }
 
     @Override

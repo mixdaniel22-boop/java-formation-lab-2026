@@ -24,7 +24,7 @@ public class AmexPaymentStrategy implements PaymentStrategy {
         } else {
             BigDecimal tariff = Constants.CREDIT_TARIFF.add(BigDecimal.ZERO);
             fee = amount.multiply(tariff).setScale(2, RoundingMode.HALF_UP);
-            confirmationMessage = "Pago con tarjeta America n Express procesado, se aplica comisión bancaria.";
+            confirmationMessage = "Pago con tarjeta American Express procesado, se aplica comisión bancaria.";
         }
         return fee;
     }
