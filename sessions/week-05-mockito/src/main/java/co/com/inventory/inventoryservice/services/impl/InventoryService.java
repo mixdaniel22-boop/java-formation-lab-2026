@@ -19,11 +19,9 @@ import java.util.stream.Collectors;
 public class InventoryService implements IInventoryService {
 
     @Autowired
-    ICatalogRepository repository ;
+    private ICatalogRepository repository ;
 
-
-    ModelMapper modelMapper = new ModelMapper();
-
+    private ModelMapper modelMapper = new ModelMapper();
 
     @Override
     public String create(ProductDto productDto) throws IllegalStateException {
