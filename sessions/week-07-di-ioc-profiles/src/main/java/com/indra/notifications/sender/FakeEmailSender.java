@@ -13,7 +13,9 @@ public class FakeEmailSender implements EmailSender{
     private Logger log = LogManager.getLogger(FakeEmailSender.class);
 
     public void send(String to, String subject, String body){
-        log.info("Send ");
+        log.info("Send email to {} with subject {}, and body {}",to, subject, body);
+
+        log.info("Send email correct");
     }
 
 }
