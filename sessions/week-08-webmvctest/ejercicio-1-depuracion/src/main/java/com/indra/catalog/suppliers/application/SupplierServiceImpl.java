@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SupplierServiceImpl {
+public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository repository;
     private AtomicLong sequence;
@@ -17,16 +17,19 @@ public class SupplierServiceImpl {
         this.sequence = new AtomicLong();
     }
 
+    @Override
     public Supplier create(Supplier supplier) {
         supplier.setId("SUP-%03d".formatted(sequence.incrementAndGet()));
         return repository.save(supplier);
     }
 
+    @Override
     public Supplier findById(String id) {
         return repository.findById(id)
                 .orElseThrow(() -> new SupplierNotFoundException(id));
     }
 
+    @Override
     public void delete(String id) {
         if (!repository.existsById(id)) {
             throw new SupplierNotFoundException(id);
