@@ -4,6 +4,9 @@ import com.indra.catalog.suppliers.application.SupplierServiceImpl;
 import com.indra.catalog.suppliers.domain.Supplier;
 import com.indra.catalog.suppliers.web.dto.CreateSupplierRequest;
 import com.indra.catalog.suppliers.web.dto.SupplierResponse;
+
+import jakarta.validation.Valid;
+
 import java.net.URI;
 import java.time.LocalDateTime;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +37,10 @@ public class SupplierController {
     }
 
     @PostMapping
-    public ResponseEntity<SupplierResponse> create(@RequestBody CreateSupplierRequest request) {
+    public ResponseEntity<SupplierResponse> create(@RequestBody @Valid CreateSupplierRequest request) {
         Supplier supplier = mapper.toDomain(request);
-        // Normalización exigida por el área de compras: razón social en mayúsculas y NIT sin puntos
+        // Normalización exigida por el área de compras: razón social en mayúsculas y
+        // NIT sin puntos
         supplier.setName(supplier.getName().trim().toUpperCase());
         supplier.setTaxId(supplier.getTaxId().replace(".", "").trim());
         supplier.setInternalNotes("Creado vía API el " + LocalDateTime.now());
@@ -44,7 +48,7 @@ public class SupplierController {
         Supplier created = supplierService.create(supplier);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("{id}")
+                .path("/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
         return ResponseEntity.created(location).body(mapper.toResponse(created));

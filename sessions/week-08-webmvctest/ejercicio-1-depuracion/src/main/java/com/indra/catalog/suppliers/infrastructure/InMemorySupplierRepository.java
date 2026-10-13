@@ -8,7 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemorySupplierRepository implements SupplierRepository {
 
-    private final Map<String, Supplier> suppliers = new ConcurrentHashMap<>();
+    private Map<String, Supplier> suppliers;
+
+    public InMemorySupplierRepository() {
+        this.suppliers = new ConcurrentHashMap<>();
+    }
 
     @Override
     public Supplier save(Supplier supplier) {
