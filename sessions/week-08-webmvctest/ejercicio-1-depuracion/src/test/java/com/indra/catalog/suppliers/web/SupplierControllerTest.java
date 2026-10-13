@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.indra.catalog.suppliers.application.SupplierServiceImpl;
 import com.indra.catalog.suppliers.domain.Supplier;
 import com.indra.catalog.suppliers.domain.SupplierNotFoundException;
+import com.indra.catalog.suppliers.web.dto.SupplierResponse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class SupplierControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private SupplierWebMapper mapper;
+
     @MockBean
     private SupplierServiceImpl supplierService;
 
@@ -43,7 +47,8 @@ class SupplierControllerTest {
         supplier.setName("ACME LTDA");
         supplier.setTaxId("900123456-7");
         supplier.setEmail("compras@acme.co");
-        when(supplierService.findById("SUP-001")).thenReturn(supplier);
+        SupplierResponse supplierResponse = mapper.toResponse(supplier);
+        when(supplierService.findById("SUP-001")).thenReturn(supplierResponse);
 
         mockMvc.perform(get("/api/suppliers/SUP-001"))
                 .andExpect(status().isOk())
@@ -65,9 +70,7 @@ class SupplierControllerTest {
     @DisplayName("test  Created Supplier - Success")
     void testCreateSupplier() throws Exception {
         when(supplierService.create(any())).thenAnswer(invocation -> {
-            Supplier supplier = invocation.getArgument(0);
-            supplier.setId("SUP-001");
-            return supplier;
+            return new SupplierResponse("SUP-001", "ACME LTDA", "900123456-7", "compras@acme.co");
         });
 
         mockMvc.perform(post("/api/suppliers")

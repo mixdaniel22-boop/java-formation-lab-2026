@@ -5,3 +5,4 @@ Se realiza el ejercicio 1, hallazgos y mejoras:
 4. se agrega validacion del body en created endpoint
 5. se refactorizan test y classes, mejorando el codigo y se agrega un nuevo test
 6. se elimina dependencia de implementacion del service en el controller
+7. se elimina data conversion en el controller

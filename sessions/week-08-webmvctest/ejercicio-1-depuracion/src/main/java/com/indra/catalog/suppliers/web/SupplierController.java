@@ -1,7 +1,6 @@
 package com.indra.catalog.suppliers.web;
 
 import com.indra.catalog.suppliers.application.SupplierService;
-import com.indra.catalog.suppliers.application.SupplierServiceImpl;
 import com.indra.catalog.suppliers.domain.Supplier;
 import com.indra.catalog.suppliers.web.dto.CreateSupplierRequest;
 import com.indra.catalog.suppliers.web.dto.SupplierResponse;
@@ -25,34 +24,26 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class SupplierController {
 
     private final SupplierService supplierService;
-    private final SupplierWebMapper mapper;
 
-    public SupplierController(SupplierService supplierService, SupplierWebMapper mapper) {
+    public SupplierController(SupplierService supplierService) {
         this.supplierService = supplierService;
-        this.mapper = mapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SupplierResponse> findById(@PathVariable String id) {
-        return ResponseEntity.ok(mapper.toResponse(supplierService.findById(id)));
+        return ResponseEntity.ok(supplierService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<SupplierResponse> create(@RequestBody @Valid CreateSupplierRequest request) {
-        Supplier supplier = mapper.toDomain(request);
-        // Normalización exigida por el área de compras: razón social en mayúsculas y
-        // NIT sin puntos
-        supplier.setName(supplier.getName().trim().toUpperCase());
-        supplier.setTaxId(supplier.getTaxId().replace(".", "").trim());
-        supplier.setInternalNotes("Creado vía API el " + LocalDateTime.now());
 
-        Supplier created = supplierService.create(supplier);
+        SupplierResponse created = supplierService.create(request);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(created.id())
                 .toUri();
-        return ResponseEntity.created(location).body(mapper.toResponse(created));
+        return ResponseEntity.created(location).body(created);
     }
 
     @DeleteMapping("/{id}")
