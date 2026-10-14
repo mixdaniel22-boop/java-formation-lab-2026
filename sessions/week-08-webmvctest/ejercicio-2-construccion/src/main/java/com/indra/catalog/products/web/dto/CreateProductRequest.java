@@ -10,6 +10,6 @@ import jakarta.validation.constraints.Size;
 
 public record CreateProductRequest(String id,
         @NotBlank(message = "obligatorio, no vacío, máximo 120 caracteres") @Size(max = 120) String name,
-        @NotNull @DecimalMin("0.0") BigDecimal price,
+        @NotNull @DecimalMin("0.1") BigDecimal price,
         @Min(0) int stock) {
 }

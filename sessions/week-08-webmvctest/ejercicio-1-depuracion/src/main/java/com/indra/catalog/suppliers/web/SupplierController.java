@@ -1,6 +1,7 @@
 package com.indra.catalog.suppliers.web;
 
 import com.indra.catalog.suppliers.application.SupplierService;
+import com.indra.catalog.suppliers.application.SupplierServiceImpl;
 import com.indra.catalog.suppliers.domain.Supplier;
 import com.indra.catalog.suppliers.web.dto.CreateSupplierRequest;
 import com.indra.catalog.suppliers.web.dto.SupplierResponse;
@@ -24,20 +25,22 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class SupplierController {
 
     private final SupplierService supplierService;
+    private final SupplierWebMapper mapper;
 
-    public SupplierController(SupplierService supplierService) {
+    public SupplierController(SupplierServiceImpl supplierService, SupplierWebMapper mapper) {
         this.supplierService = supplierService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SupplierResponse> findById(@PathVariable String id) {
-        return ResponseEntity.ok(supplierService.findById(id));
+        return ResponseEntity.ok(mapper.toResponse(supplierService.findById(id)));
     }
 
     @PostMapping
     public ResponseEntity<SupplierResponse> create(@RequestBody @Valid CreateSupplierRequest request) {
 
-        SupplierResponse created = supplierService.create(request);
+        SupplierResponse created = mapper.toResponse(supplierService.create(mapper.toDomain(request)));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -49,6 +52,6 @@ public class SupplierController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         supplierService.delete(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
 }

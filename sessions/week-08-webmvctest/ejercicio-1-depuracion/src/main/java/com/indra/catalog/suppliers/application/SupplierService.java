@@ -1,13 +1,12 @@
 package com.indra.catalog.suppliers.application;
 
-import com.indra.catalog.suppliers.web.dto.CreateSupplierRequest;
-import com.indra.catalog.suppliers.web.dto.SupplierResponse;
+import com.indra.catalog.suppliers.domain.Supplier;
 
 public interface SupplierService {
 
-    public SupplierResponse create(CreateSupplierRequest supplier);
+    public Supplier create(Supplier supplier);
 
-    public SupplierResponse findById(String id);
+    public Supplier findById(String id);
 
     public void delete(String id);
 }

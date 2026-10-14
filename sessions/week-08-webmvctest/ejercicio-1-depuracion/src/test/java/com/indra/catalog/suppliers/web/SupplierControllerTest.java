@@ -33,9 +33,6 @@ class SupplierControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private SupplierWebMapper mapper;
-
     @MockBean
     private SupplierServiceImpl supplierService;
 
@@ -43,17 +40,18 @@ class SupplierControllerTest {
     @DisplayName("test Get Supplier by ID - Success")
     void testGetSupplierById() throws Exception {
         Supplier supplier = new Supplier();
-        supplier.setId("SUP-001");
+        supplier.setId("SUP-01");
         supplier.setName("ACME LTDA");
         supplier.setTaxId("900123456-7");
         supplier.setEmail("compras@acme.co");
-        SupplierResponse supplierResponse = mapper.toResponse(supplier);
-        when(supplierService.findById("SUP-001")).thenReturn(supplierResponse);
+        when(supplierService.findById("SUP-01")).thenReturn(supplier);
 
-        mockMvc.perform(get("/api/suppliers/SUP-001"))
+        mockMvc.perform(get("/api/suppliers/SUP-01"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(
-                        "{\"id\":\"SUP-001\",\"name\":\"ACME LTDA\",\"taxId\":\"900123456-7\",\"email\":\"compras@acme.co\"}"));
+                .andExpect(jsonPath("$.id").value("SUP-01"))
+                .andExpect(jsonPath("$.name").value("ACME LTDA"))
+                .andExpect(jsonPath("$.taxId").value("900123456-7"))
+                .andExpect(jsonPath("$.email").value("compras@acme.co"));
     }
 
     @Test
@@ -70,7 +68,12 @@ class SupplierControllerTest {
     @DisplayName("test  Created Supplier - Success")
     void testCreateSupplier() throws Exception {
         when(supplierService.create(any())).thenAnswer(invocation -> {
-            return new SupplierResponse("SUP-001", "ACME LTDA", "900123456-7", "compras@acme.co");
+            Supplier supplier = invocation.getArgument(0);
+            supplier.setId("SUP-001");
+            supplier.setName("ACME LTDA");
+            supplier.setTaxId("900123456-7");
+            supplier.setEmail("compras@acme.co");
+            return supplier;
         });
 
         mockMvc.perform(post("/api/suppliers")
@@ -84,8 +87,10 @@ class SupplierControllerTest {
                         """))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/api/suppliers/SUP-001"))
+                .andExpect(jsonPath("$.id").value("SUP-001"))
                 .andExpect(jsonPath("$.name").value("ACME LTDA"))
-                .andExpect(jsonPath("$.taxId").value("900123456-7"));
+                .andExpect(jsonPath("$.taxId").value("900123456-7"))
+                .andExpect(jsonPath("$.email").value("compras@acme.co"));
     }
 
     @Test
@@ -109,7 +114,7 @@ class SupplierControllerTest {
     @DisplayName("test  DELETE Supplier - Success")
     void testDeleteSupplierOk() throws Exception {
         mockMvc.perform(delete("/api/suppliers/SUP-001"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

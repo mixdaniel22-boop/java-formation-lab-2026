@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.indra.catalog.products.application.ProductService;
+import com.indra.catalog.products.domain.model.Product;
 import com.indra.catalog.products.web.dto.CreateProductRequest;
 import com.indra.catalog.products.web.dto.ProductResponse;
 
@@ -23,31 +24,34 @@ import jakarta.validation.Valid;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductWebMapper mapper;
 
-    ProductController(ProductService productService) {
+    ProductController(ProductService productService, ProductWebMapper mapper) {
         this.productService = productService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable String id) {
-        return ResponseEntity.ok(productService.findById(id));
+        return ResponseEntity.ok(mapper.toResponse(productService.findById(id)));
     }
 
     @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
 
-        ProductResponse created = productService.create(request);
+        Product product = mapper.toDomain(request);
+        Product created = productService.create(product);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.id())
+                .buildAndExpand(created.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(created);
+        return ResponseEntity.created(location).body(mapper.toResponse(created));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         productService.delete(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
 }

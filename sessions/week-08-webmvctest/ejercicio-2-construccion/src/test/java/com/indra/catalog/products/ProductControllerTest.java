@@ -30,14 +30,10 @@ import com.indra.catalog.products.domain.exception.ProductNotFoundException;
 import com.indra.catalog.products.domain.model.Product;
 import com.indra.catalog.products.web.ProductController;
 import com.indra.catalog.products.web.ProductWebMapper;
-import com.indra.catalog.products.web.dto.ProductResponse;
 
 @WebMvcTest(ProductController.class)
 @Import(ProductWebMapper.class)
 public class ProductControllerTest {
-
-    @Autowired
-    private ProductWebMapper mapper;
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,17 +47,18 @@ public class ProductControllerTest {
     void testGetProductById() throws Exception {
         Product product = new Product();
         product.setId("PROD-001");
-        product.setName("producto x");
-        product.setPrice(new BigDecimal("100.00"));
+        product.setName("producto 1");
+        product.setPrice(new BigDecimal("200.00"));
         product.setStock(3);
-        ProductResponse productResponse = mapper.toResponse(product);
-        when(productService.findById("PROD-001")).thenReturn(productResponse);
+        when(productService.findById("PROD-001")).thenReturn(product);
 
         mockMvc.perform(get("/api/products/PROD-001")
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(
-                        "{\"id\":\"PROD-001\",\"name\":\"producto x\",\"price\":100.00,\"stock\":3}"));
+                .andExpect(jsonPath("$.id").value("PROD-001"))
+                .andExpect(jsonPath("$.name").value("producto 1"))
+                .andExpect(jsonPath("$.price").value(200.00))
+                .andExpect(jsonPath("$.stock").value(3));
     }
 
     @Test
@@ -81,7 +78,12 @@ public class ProductControllerTest {
     @DisplayName("test  Created Product - Success")
     void testCreateProduct() throws Exception {
         when(productService.create(any())).thenAnswer(invocation -> {
-            return new ProductResponse("PROD-001", "producto x", new BigDecimal("100.00"), 3);
+            Product product = invocation.getArgument(0);
+            product.setId("PROD-001");
+            product.setName("producto x");
+            product.setPrice(new BigDecimal("100.00"));
+            product.setStock(3);
+            return product;
         });
 
         mockMvc.perform(post("/api/products")
@@ -96,7 +98,10 @@ public class ProductControllerTest {
                         """))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/api/products/PROD-001"))
-                .andExpect(jsonPath("$.name").value("producto x"));
+                .andExpect(jsonPath("$.id").value("PROD-001"))
+                .andExpect(jsonPath("$.name").value("producto x"))
+                .andExpect(jsonPath("$.price").value(100.00))
+                .andExpect(jsonPath("$.stock").value(3));
     }
 
     @Test
@@ -143,7 +148,7 @@ public class ProductControllerTest {
     void testDeleteProductOk() throws Exception {
         mockMvc.perform(delete("/api/products/PROD-001")
                 .with(csrf()))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test

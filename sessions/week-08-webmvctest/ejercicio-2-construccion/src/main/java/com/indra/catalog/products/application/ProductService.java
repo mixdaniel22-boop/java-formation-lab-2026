@@ -1,13 +1,12 @@
 package com.indra.catalog.products.application;
 
-import com.indra.catalog.products.web.dto.CreateProductRequest;
-import com.indra.catalog.products.web.dto.ProductResponse;
+import com.indra.catalog.products.domain.model.Product;
 
 public interface ProductService {
 
-    ProductResponse create(CreateProductRequest product);
+    Product create(Product product);
 
-    ProductResponse findById(String id);
+    Product findById(String id);
 
     void delete(String id);
 
