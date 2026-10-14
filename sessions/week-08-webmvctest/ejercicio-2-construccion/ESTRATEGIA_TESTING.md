@@ -37,5 +37,5 @@ Para cada regla, marca en qué nivel se prueba y justifica.
 
 | Comando | Tests | Tiempo reportado por Surefire |
 |---------|-------|-------------------------------|
-| `mvn -pl ejercicio-2-construccion test -Dtest='ProductControllerTest*'` | | |
-| `mvn -pl ejercicio-2-construccion verify` | | |
+| `mvn -pl ejercicio-2-construccion test -Dtest='ProductControllerTest*'` | 5.719 s| 10.090 s|
+| `mvn -pl ejercicio-2-construccion verify` | 6.922 s| 16.209 s |
