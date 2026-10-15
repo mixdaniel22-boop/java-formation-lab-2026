@@ -18,7 +18,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(ProductNotFoundException exception,
             HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(
-                Instant.now(), 404, "PRODUCT_NOT_FOUND", List.of(exception.getMessage()), request.getRequestURI()));
+                Instant.now(), 404, "PRODUCT_NOT_FOUND", List.of("Producto no encontrado."), request.getRequestURI()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -34,6 +34,6 @@ public class ApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception exception, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(
-                Instant.now(), 500, "INTERNAL_ERROR", List.of(exception.toString()), request.getRequestURI()));
+                Instant.now(), 500, "INTERNAL_ERROR", List.of("Ha ocurrido un error inesperado."), request.getRequestURI()));
     }
 }
