@@ -18,13 +18,13 @@ Para cada regla, marca en qué nivel se prueba y justifica.
 
 | Regla / comportamiento | Dominio | Aplicación | Slice web | Integración | Justificación |
 |------------------------|:-------:|:----------:|:---------:|:-----------:|---------------|
-| El precio debe ser > 0 | | | | | |
-| El nombre vacío devuelve 400 | | | | | |
-| Producto inexistente devuelve 404 | | | | | |
-| Se genera un id al crear | | | | | |
+| El precio debe ser > 0 | x | | | | |
+| El nombre vacío devuelve 400 | x | | | | |
+| Producto inexistente devuelve 404 | x | | | | |
+| Se genera un id al crear | | x | | | |
 | `Location` apunta al recurso creado | | | | | |
 | `DELETE` exige rol `ADMIN` | | | | | |
-| Las capas quedan cableadas | | | | | |
+| Las capas quedan cableadas | | | | x | |
 
 ## 3. Decisiones y trade-offs
 

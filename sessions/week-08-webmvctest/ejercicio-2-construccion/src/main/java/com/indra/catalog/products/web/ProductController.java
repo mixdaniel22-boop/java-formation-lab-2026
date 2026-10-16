@@ -2,6 +2,7 @@ package com.indra.catalog.products.web;
 
 import java.net.URI;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,45 +14,41 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.indra.catalog.products.application.ProductService;
-import com.indra.catalog.products.domain.model.Product;
 import com.indra.catalog.products.web.dto.CreateProductRequest;
 import com.indra.catalog.products.web.dto.ProductResponse;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping(path = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductWebMapper mapper;
 
-    ProductController(ProductService productService, ProductWebMapper mapper) {
+    ProductController(ProductService productService) {
         this.productService = productService;
-        this.mapper = mapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable String id) {
-        return ResponseEntity.ok(mapper.toResponse(productService.findById(id)));
+        return ResponseEntity.ok(ProductResponse.from(productService.findById(id)));
     }
 
     @PostMapping
     public ResponseEntity<ProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
 
-        Product product = mapper.toDomain(request);
-        Product created = productService.create(product);
+       ProductResponse created = ProductResponse.from(productService.create(request.toCommand()));
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(created.id())
                 .toUri();
-        return ResponseEntity.created(location).body(mapper.toResponse(created));
+        return ResponseEntity.created(location).body(created);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         productService.delete(id);
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.noContent().build();
     }
 }

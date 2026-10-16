@@ -17,9 +17,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product create(Product product) {
-
-        product.setId("PROD-%03d".formatted(sequence.incrementAndGet()));
+    public Product create(CreateProductCommand command) {
+        Product product = new Product("PROD-%03d".formatted(sequence.incrementAndGet()), command.name(), command.price(), command.stock());
         return repository.save(product);
     }
 

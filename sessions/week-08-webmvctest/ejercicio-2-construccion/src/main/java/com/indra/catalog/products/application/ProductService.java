@@ -4,7 +4,7 @@ import com.indra.catalog.products.domain.model.Product;
 
 public interface ProductService {
 
-    Product create(Product product);
+    Product create(CreateProductCommand product);
 
     Product findById(String id);
 
