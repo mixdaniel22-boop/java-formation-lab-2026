@@ -1,5 +1,6 @@
 package com.indra.retail.manager;
 
+import com.indra.retail.entities.Address;
 import com.indra.retail.entities.Customer;
 import com.indra.retail.entities.Order;
 import com.indra.retail.entities.OrderItem;
@@ -37,7 +38,7 @@ class LazyLoadingTest {
         // Todo en una transacción: las entidades quedan managed y el test no
         // depende de qué cascade tenga el mapeo.
         orderId = transactionTemplate.execute(status -> {
-            Customer customer = manager.create(new Customer("Carla", UUID.randomUUID() + "@indra.com"));
+            Customer customer = manager.create(new Customer("Carla", UUID.randomUUID() + "@indra.com", new Address("street", "city", "complement")));
             Product product = manager.create(new Product("Laptop", new BigDecimal("1500.00"), 4));
             Order order = new Order(customer);
             order.addItem(new OrderItem(product, 1, product.getPrice()));
@@ -114,7 +115,7 @@ class LazyLoadingTest {
     void shouldNotDeleteProductWhenDeletingItem() {
 
         orderId = transactionTemplate.execute(status -> {
-            Customer customer = manager.create(new Customer("Vanesa", UUID.randomUUID() + "@indra.com"));
+            Customer customer = manager.create(new Customer("Vanesa", UUID.randomUUID() + "@indra.com", new Address("street", "city", "complement")));
             Product product = manager.create(new Product("PC", new BigDecimal("15000.00"), 4));
             Order order = new Order(customer);
             order.addItem(new OrderItem(product, 1, product.getPrice()));

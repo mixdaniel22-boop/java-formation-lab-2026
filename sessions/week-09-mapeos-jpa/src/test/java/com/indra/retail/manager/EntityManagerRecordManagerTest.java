@@ -1,6 +1,7 @@
 package com.indra.retail.manager;
 
 import com.indra.retail.commons.OrderStatus;
+import com.indra.retail.entities.Address;
 import com.indra.retail.entities.Customer;
 import com.indra.retail.entities.Order;
 import com.indra.retail.entities.OrderItem;
@@ -39,7 +40,7 @@ class EntityManagerRecordManagerTest {
     @Test
     @DisplayName("Crea un Customer y lo consulta por id")
     void shouldCreateAndFindCustomer() {
-        Customer saved = manager.create(new Customer("Ana", uniqueEmail()));
+        Customer saved = manager.create(new Customer("Ana", uniqueEmail(), new Address("street", "city", "complement")));
 
         assertNotNull(saved.getId());
         Customer found = manager.findById(Customer.class, saved.getId()).orElseThrow();
@@ -61,7 +62,7 @@ class EntityManagerRecordManagerTest {
     @Test
     @DisplayName("Elimina un Customer")
     void shouldDeleteCustomer() {
-        Customer saved = manager.create(new Customer("Luis", uniqueEmail()));
+        Customer saved = manager.create(new Customer("Luis", uniqueEmail(), new Address("street", "city", "complement")));
 
         assertTrue(manager.delete(Customer.class, saved.getId()));
 
@@ -89,7 +90,7 @@ class EntityManagerRecordManagerTest {
         // Todo en una transacción: las entidades quedan managed y el test no
         // depende de qué cascade tenga el mapeo.
         Long[] ids = transactionTemplate.execute(status -> {
-            Customer customer = manager.create(new Customer("Marta", uniqueEmail()));
+            Customer customer = manager.create(new Customer("Marta", uniqueEmail(), new Address("street", "city", "complement")));
             Product product = manager.create(new Product("Monitor", new BigDecimal("300.00"), 3));
             Order order = new Order(customer);
             order.addItem(new OrderItem(product, 2, product.getPrice()));
