@@ -1,5 +1,6 @@
 package com.indra.retail.manager;
 
+import com.indra.retail.commons.OrderStatus;
 import com.indra.retail.entities.Customer;
 import com.indra.retail.entities.Order;
 import com.indra.retail.entities.OrderItem;
@@ -97,7 +98,10 @@ class EntityManagerRecordManagerTest {
         });
 
         Order found = manager.findById(Order.class, ids[0]).orElseThrow();
-        assertEquals("PENDING", found.getStatus());
-        assertEquals(ids[1], found.getCustomer().getId());
+        assertEquals(OrderStatus.PENDING, found.getStatus());
+
+        Long customerId = transactionTemplate.execute(status ->
+                manager.findById(Order.class, ids[0]).orElseThrow().getCustomer().getId());
+        assertEquals(ids[1], customerId);
     }
 }
