@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
-
 @Entity
 @Table(name = "customers")
 public class Customer {
@@ -18,15 +17,18 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
     protected Customer() {
-     
+
     }
 
     public Customer(String name, String email) {
@@ -56,5 +58,11 @@ public class Customer {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
     }
 }
