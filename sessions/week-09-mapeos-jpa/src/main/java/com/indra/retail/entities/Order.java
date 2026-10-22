@@ -85,11 +85,5 @@ public class Order {
     public List<OrderItem> getItems() {
         return items;
     }
-    
-    public String toString(){
-        return  "id: " + id + "\n"
-        +  "customer: " + customer + "\n"
-        +"order: " + createdAt + "\n"
-        +"items: " + items;
-    }
+
 }

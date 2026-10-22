@@ -72,9 +72,4 @@ public class OrderItem {
         return product;
     }
 
-    public String toString() {
-        return "product: " + product + "\n"
-                + "order: " + order + "\n"
-                + "unitPrice: " + unitPrice;
-    }
 }

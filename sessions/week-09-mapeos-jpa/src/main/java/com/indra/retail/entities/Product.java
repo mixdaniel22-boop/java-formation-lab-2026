@@ -68,9 +68,4 @@ public class Product {
         this.stock = stock;
     }
 
-    public String toString() {
-        return "name: " + name + "\n"
-                + "price: " + price + "\n"
-                + "stock: " + stock;
-    }
 }
