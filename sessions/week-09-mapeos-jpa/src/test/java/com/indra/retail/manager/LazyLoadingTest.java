@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
@@ -38,7 +39,8 @@ class LazyLoadingTest {
         // Todo en una transacción: las entidades quedan managed y el test no
         // depende de qué cascade tenga el mapeo.
         orderId = transactionTemplate.execute(status -> {
-            Customer customer = manager.create(new Customer("Carla", UUID.randomUUID() + "@indra.com", new Address("street", "city", "complement")));
+            Customer customer = manager.create(new Customer("Carla", UUID.randomUUID() + "@indra.com",
+                    new Address("street", "city", "complement")));
             Product product = manager.create(new Product("Laptop", new BigDecimal("1500.00"), 4));
             Order order = new Order(customer);
             order.addItem(new OrderItem(product, 1, product.getPrice()));
@@ -115,7 +117,8 @@ class LazyLoadingTest {
     void shouldNotDeleteProductWhenDeletingItem() {
 
         orderId = transactionTemplate.execute(status -> {
-            Customer customer = manager.create(new Customer("Vanesa", UUID.randomUUID() + "@indra.com", new Address("street", "city", "complement")));
+            Customer customer = manager.create(new Customer("Vanesa", UUID.randomUUID() + "@indra.com",
+                    new Address("street", "city", "complement")));
             Product product = manager.create(new Product("PC", new BigDecimal("15000.00"), 4));
             Order order = new Order(customer);
             order.addItem(new OrderItem(product, 1, product.getPrice()));
@@ -135,5 +138,29 @@ class LazyLoadingTest {
 
         assertEquals(1, prodFound);
         assertNull(manager.findById(OrderItem.class, itemId).orElse(null));
+    }
+
+    @Test
+    @DisplayName("Review Product versions")
+    void testProductVersions() {
+        Product prodSave = manager.create(new Product("iphone", new BigDecimal("100000.00"), 5));
+
+        Product prodFoundA = manager.findById(Product.class, prodSave.getId()).orElseThrow();
+        Product prodFoundB = manager.findById(Product.class, prodSave.getId()).orElseThrow();
+
+        System.out.println("Usuario A lee version: " + prodFoundA.getVersion() +
+                ", Usuario B lee version: " + prodFoundB.getVersion());
+
+        prodFoundA.setStock(3);
+        manager.update(prodFoundA);
+        System.out.println("Usuario A guarda, nueva version: " + prodFoundA.getVersion());
+
+        prodFoundB.setStock(4);
+        System.out.println("Usuario A guarda, version anterior: " + prodFoundB.getVersion());
+        assertThrows(ObjectOptimisticLockingFailureException.class, () -> manager.update(prodFoundB));
+
+        Product prodFound = manager.findById(Product.class, prodSave.getId()).orElseThrow();
+
+        assertEquals(3, prodFound.getStock());
     }
 }
