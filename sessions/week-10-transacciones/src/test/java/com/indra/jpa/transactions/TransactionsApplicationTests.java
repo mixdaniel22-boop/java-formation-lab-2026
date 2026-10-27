@@ -22,6 +22,8 @@ import com.indra.jpa.transactions.repository.TransferEventRepository;
 import com.indra.jpa.transactions.service.TransferAuditService;
 import com.indra.jpa.transactions.service.TransferService;
 
+import lombok.SneakyThrows;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 		properties = "spring.jpa.properties.hibernate.hbm2ddl.halt_on_error=true")
 class TransactionsApplicationTests {
@@ -49,14 +51,14 @@ class TransactionsApplicationTests {
 		destination = createAccount("Bob", "50.00");
 	}
 
-	//@Test
+	@Test
 	void insufficientFundsRollsBackBothBalances() {
 		assertThrows(InsufficientFundsException.class, () -> {
 			transferService.transfer(source.getId(), destination.getId(), new BigDecimal("150.00"));
 		});
 	}
 
-	//@Test
+	@Test
 	void auditSurvivesTransferRollback() {
 		assertThrows(InsufficientFundsException.class, () -> {
 			transferService.transfer(source.getId(), destination.getId(), new BigDecimal("120.00"));
@@ -65,6 +67,7 @@ class TransactionsApplicationTests {
 	}
 
 	@Test
+	@SneakyThrows
 	void correctTransferWithVerify() {
 		transferService.transfer(source.getId(), destination.getId(), new BigDecimal("20.00"));
 		

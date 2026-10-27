@@ -24,14 +24,13 @@ public class TransferService {
     @Transactional(rollbackFor = InsufficientFundsException.class)
     public void transfer(Long fromAccountId, Long toAccountId, BigDecimal amount)
             throws InsufficientFundsException {
-        System.out.println("TransferService.transfer: fromAccountId=" + fromAccountId + ", toAccountId=" + toAccountId + ", amount=" + amount);
         if (amount == null || amount.signum() <= 0) {
             throw new IllegalArgumentException("Amount must be positive");
         }
         if (fromAccountId == null || toAccountId == null || fromAccountId.equals(toAccountId)) {
             throw new IllegalArgumentException("Two different accounts are required");
         }
-        System.out.println("TransferService.transfer: Validating accounts and logging transfer event");
+
         Account fromAccount = accountRepository.findById(fromAccountId)
                 .orElseThrow(() -> new IllegalArgumentException("Source account not found"));
         Account toAccount = accountRepository.findById(toAccountId)
@@ -43,18 +42,15 @@ public class TransferService {
         event.setAmount(amount);
         transferAuditService.log(event);
 
-        System.out.println("TransferService.transfer:save log");
         fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
         accountRepository.saveAndFlush(fromAccount);
         if (fromAccount.getBalance().signum() < 0) {
             throw new InsufficientFundsException("Insufficient funds in account " + fromAccountId);
         }
         
-        System.out.println("TransferService.transfer: destination");
         toAccount.setBalance(toAccount.getBalance().add(amount));
         accountRepository.save(toAccount);
         
-        System.out.println("TransferService.transfer: finish");
     }
 
 }
