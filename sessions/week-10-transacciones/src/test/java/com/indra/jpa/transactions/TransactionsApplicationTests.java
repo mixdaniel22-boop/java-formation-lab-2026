@@ -2,8 +2,6 @@ package com.indra.jpa.transactions;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.indra.jpa.transactions.exception.InsufficientFundsException;
 import com.indra.jpa.transactions.model.Account;
@@ -36,7 +35,7 @@ class TransactionsApplicationTests {
 	@Autowired
 	private TransferService transferService;
 
-	@Autowired
+	@MockitoBean
 	private TransferAuditService transferAuditService;
 
 	private Account source;
@@ -59,7 +58,10 @@ class TransactionsApplicationTests {
 
 	@Test
 	void auditSurvivesTransferRollback() {
-		assertTrue(true);
+		assertThrows(InsufficientFundsException.class, () -> {
+			transferService.transfer(source.getId(), destination.getId(), new BigDecimal("120.00"));
+		});
+		verify(transferAuditService, times(1)).log(any(TransferEvent.class));
 	}
 
 	private Account createAccount(String owner, String balance) {
