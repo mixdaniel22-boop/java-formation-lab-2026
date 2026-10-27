@@ -23,6 +23,12 @@
 - [ ] Tercer test: transferencia exitosa con saldos correctos verificados
 - [ ] Explicación en el PR de por qué usar `REQUIRES_NEW` en lugar de `NESTED` para este caso
 
+### Explicación adicional del PR
+Se requiere el `REQUIRES_NEW` para aislar la transacción y que al hacer rollback se guarde el log, pues este quedaría en una transacción aislada a la del método
+`trasnfer()`.
+Por otro lado el efecto del `NESTED` no lograría el efecto deseado, pues se haría el rollback incluso del log si se marca así. Esto es pues el nested no aisla el guardado
+del log como una transacción aparte si no que haría el guardado del log parte de la misma transacción principal.
+
 ## Escala de madurez
 
 Todos los niveles deben cumplir el checklist obligatorio. La madurez se evidencia en la calidad de la solución y su explicación; los bonus son opcionales.
