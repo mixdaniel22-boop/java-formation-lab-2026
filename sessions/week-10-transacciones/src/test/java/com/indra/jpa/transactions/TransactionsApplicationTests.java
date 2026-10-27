@@ -1,7 +1,12 @@
 package com.indra.jpa.transactions;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.math.BigDecimal;
 
@@ -10,9 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.indra.jpa.transactions.exception.InsufficientFundsException;
 import com.indra.jpa.transactions.model.Account;
+import com.indra.jpa.transactions.model.TransferEvent;
 import com.indra.jpa.transactions.repository.AccountRepository;
 import com.indra.jpa.transactions.repository.TransferEventRepository;
+import com.indra.jpa.transactions.service.TransferAuditService;
 import com.indra.jpa.transactions.service.TransferService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -28,6 +36,9 @@ class TransactionsApplicationTests {
 	@Autowired
 	private TransferService transferService;
 
+	@Autowired
+	private TransferAuditService transferAuditService;
+
 	private Account source;
 	private Account destination;
 
@@ -41,7 +52,9 @@ class TransactionsApplicationTests {
 
 	@Test
 	void insufficientFundsRollsBackBothBalances() {
-		assertTrue(true);
+		assertThrows(InsufficientFundsException.class, () -> {
+			transferService.transfer(source.getId(), destination.getId(), new BigDecimal("150.00"));
+		});
 	}
 
 	@Test
