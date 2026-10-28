@@ -50,6 +50,9 @@ class TransactionsApplicationTests {
 		assertThrows(InsufficientFundsException.class, () -> {
 			transferService.transfer(source.getId(), destination.getId(), new BigDecimal("150.00"));
 		});
+		
+		assertBalance(source.getId(), "100.00");
+		assertBalance(destination.getId(), "50.00");
 	}
 
 	@Test
@@ -64,11 +67,14 @@ class TransactionsApplicationTests {
 					assertThat(event.getToAccountId()).isEqualTo(destination.getId());
 					assertThat(event.getAmount()).isEqualByComparingTo("120.00");
 				});
+		
+		assertBalance(source.getId(), "100.00");
+		assertBalance(destination.getId(), "50.00");
 	}
 
 	@Test
 	@SneakyThrows
-	void correctTransferWithVerify() {
+	void successfulTransferUpdatesBothBalances() {
 		transferService.transfer(source.getId(), destination.getId(), new BigDecimal("20.00"));
 		
 		assertBalance(source.getId(), "80.00");
