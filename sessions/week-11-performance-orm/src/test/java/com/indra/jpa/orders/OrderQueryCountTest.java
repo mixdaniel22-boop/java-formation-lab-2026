@@ -57,17 +57,6 @@ class OrderQueryCountTest {
 		});
 	}
 
-	// Diagnóstico para la demo: muestra el N+1 (1 + N órdenes + N*3 productos). No lo borres antes del fix.
-	@Test
-	void diagnosticPrintsQueryCount() {
-		var measured = counter.measure(() -> orderService.listByStatus(OrderStatus.CONFIRMED));
-
-		System.out.println(">>> Queries para " + ORDERS + " órdenes: " + measured.queries());
-		assertThat(measured.queries()).isPositive();
-	}
-
-	// TODO (reto, paso 5): quita @Disabled, implementa el fix en OrderRepository y deja pasar este test.
-	@Disabled("Reto: pasa a verde cuando elimines el N+1")
 	@Test
 	void listingOrdersExecutesAtMostThreeQueries() {
 		var measured = counter.measure(() -> orderService.listByStatus(OrderStatus.CONFIRMED));
