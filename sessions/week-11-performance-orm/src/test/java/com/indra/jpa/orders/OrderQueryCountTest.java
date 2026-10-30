@@ -64,8 +64,6 @@ class OrderQueryCountTest {
 		assertThat(measured.queries()).isLessThanOrEqualTo(3);
 	}
 
-	// TODO (reto, requisito de paginación): este test también debe quedar en verde.
-	@Disabled("Reto: el listado paginado tampoco puede tener N+1")
 	@Test
 	void pagedListingExecutesAtMostThreeQueries() {
 		var measured = counter.measure(

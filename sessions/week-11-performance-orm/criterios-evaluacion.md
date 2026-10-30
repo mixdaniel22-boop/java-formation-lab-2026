@@ -28,3 +28,7 @@
 Queries para 50 �rdenes: 201
 Queries para 50 �rdenes: 151 con el uso @EntityGraph sin join fetch
 Queries para 50 �rdenes: 1  con el Join fetch
+
+pageable
+82L tal cual viene en el reto
+pasa el test fetch = FetchType.LAZY y @BatchSize(size = 50)
